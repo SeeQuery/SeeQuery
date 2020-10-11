@@ -22,7 +22,8 @@ Sure, we have evaluated the method on two ontologies: Pizza and TrhOnto. Both on
 - `PYTHONPATH=. python seequery/evaluate_trh.py` -- ensure that `config.yaml` has `trh` set as the value of `onto_id`!
 
 ## How well does it work?
-We provide an in-detail evaluation reports in `evaluation` folder (for `pizza` and `trhonto` separately).
+The overall quality of the method is estimated on Pizza (59.46% output scores are classified as correct) and TRHOnto (50% classified as correct) and is limited mostly due missing SPARQL-OWL templates. Having a bigger/more various resource than CQ2SPARQLOWL as the source of CQ to SPARQL-OWL, the coverage of SPARQL-OWL templates could be higher resulting in higher scores.
+We provide an in-detail evaluation reports in `evaluation_resources` folder (for `pizza` and `trhonto` separately).
 
 ## What are the other ontologies provided?
 `SeeQuery` is a general framework for translating CQs into queries. However, in order to run it it requires mappings from some dataset of CQ to SPARQL-OWL examples, since the method is template based. To construct our mappings (you can find them in `resources/cq_to_query/pattern_mapping.json`) we utilized `CQ2SPARQLOWL` (https://github.com/CQ2SPARQLOWL/Dataset) the biggest to date dataset of CQ to SPARQL-OWL examples. We also used `CQ2SPARQLOWL` to fine-tune our hyperparameters. For this purpose, we needed to use ontologies provided in the dataset and you can find them in `resources/ontologies` as well as `pizza` and `trhonto` -- our evaluation ontologies.
