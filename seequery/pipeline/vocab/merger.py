@@ -1,7 +1,8 @@
-from seequery.utils.helpers import Helpers
-from seequery.pipeline.pipeline_component import PipelineComponent
-from seequery.pipeline.match_item import MatchItem
 from typing import List
+
+from seequery.pipeline.match_item import MatchItem
+from seequery.pipeline.pipeline_component import PipelineComponent
+from seequery.utils.helpers import Helpers
 
 
 class Merger(PipelineComponent):

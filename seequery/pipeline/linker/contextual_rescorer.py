@@ -1,12 +1,14 @@
+import itertools
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+from seequery.embeddings.embeddings_manager import EmbeddingsManager
+from seequery.ontology.ontology_manager import OntologyManager
+from seequery.pipeline.match_item import MatchItem
 from seequery.pipeline.pipeline_component import PipelineComponent
 from seequery.pipeline.scored_translation import ScoredTranslation
-from seequery.ontology.ontology_manager import OntologyManager
-from seequery.embeddings.embeddings_manager import EmbeddingsManager
 from seequery.utils.meta_template import MetaTemplateChunks
-from seequery.pipeline.match_item import MatchItem
-from typing import Any, Dict, List, Optional, Tuple
-import itertools
-import numpy as np
 
 
 class ContextualRescorer(PipelineComponent):

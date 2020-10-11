@@ -1,7 +1,8 @@
 import json
 import re
 
-from seequery.pipeline.pattern_to_template.everygram_similarity_scorer import EverygramSimilarityScorer
+from seequery.pipeline.pattern_to_template.everygram_similarity_scorer import \
+    EverygramSimilarityScorer
 from seequery.pipeline.pipeline_component import PipelineComponent
 
 

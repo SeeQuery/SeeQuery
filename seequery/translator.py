@@ -1,12 +1,13 @@
 import logging
 from typing import List, Optional, Tuple, Union
-import yaml
+
 import spacy
+import yaml
 from spacy.cli.download import download as spacy_download
 
-from seequery.pipeline.pipeline import Pipeline
 from seequery.embeddings.embeddings_manager import EmbeddingsManager
 from seequery.ontology.ontology_manager import OntologyManager
+from seequery.pipeline.pipeline import Pipeline
 
 
 class CQToSPARQLOWL:

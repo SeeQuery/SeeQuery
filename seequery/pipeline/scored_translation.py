@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 from seequery.utils.linking_category import LinkingCategory
 
 

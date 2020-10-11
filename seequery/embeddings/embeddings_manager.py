@@ -1,10 +1,11 @@
-import numpy as np
+import logging
 import os
 import pickle
 from typing import Dict
-from scipy import spatial
-import logging
+
+import numpy as np
 import spacy
+from scipy import spatial
 
 
 class EmbeddingsManager:

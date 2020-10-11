@@ -1,7 +1,7 @@
 import logging
 import sys
-from seequery.translator import CQToSPARQLOWL
 
+from seequery.translator import CQToSPARQLOWL
 
 logging.basicConfig(filename='cq_to_sparql.log', level=logging.DEBUG)
 

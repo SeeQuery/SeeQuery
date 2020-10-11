@@ -1,13 +1,14 @@
 from typing import List
+
+from seequery.embeddings.embeddings_manager import EmbeddingsManager
+from seequery.ontology.ontology_manager import OntologyManager
 from seequery.pipeline.linker.contextual_rescorer import ContextualRescorer
 from seequery.pipeline.match_item import MatchItem
+from seequery.pipeline.pipeline_component import PipelineComponent
 from seequery.pipeline.scored_translation import ScoredTranslation
 from seequery.utils.helpers import Helpers
 from seequery.utils.linking_category import LinkingCategory
 from seequery.utils.meta_template import MetaTemplateChunks
-from seequery.pipeline.pipeline_component import PipelineComponent
-from seequery.ontology.ontology_manager import OntologyManager
-from seequery.embeddings.embeddings_manager import EmbeddingsManager
 
 
 class EntityLinker(PipelineComponent):

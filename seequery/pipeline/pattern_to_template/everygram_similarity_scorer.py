@@ -1,6 +1,7 @@
-from nltk.util import everygrams
-from nltk.tokenize import word_tokenize
 from typing import List
+
+from nltk.tokenize import word_tokenize
+from nltk.util import everygrams
 
 
 class EverygramSimilarityScorer():

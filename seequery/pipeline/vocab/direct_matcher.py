@@ -1,11 +1,12 @@
-from seequery.utils.helpers import Helpers
-from seequery.ontology.ontology_manager import OntologyManager
-from seequery.pipeline.match_item import MatchItem
-from seequery.pipeline.scored_translation import ScoredTranslation
-from seequery.utils.linking_category import LinkingCategory
-from seequery.pipeline.pipeline_component import PipelineComponent
 import re
 from typing import Dict, List, Tuple
+
+from seequery.ontology.ontology_manager import OntologyManager
+from seequery.pipeline.match_item import MatchItem
+from seequery.pipeline.pipeline_component import PipelineComponent
+from seequery.pipeline.scored_translation import ScoredTranslation
+from seequery.utils.helpers import Helpers
+from seequery.utils.linking_category import LinkingCategory
 
 
 class DirectMatcher(PipelineComponent):

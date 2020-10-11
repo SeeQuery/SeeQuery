@@ -1,8 +1,10 @@
-from seequery.utils.helpers import Helpers
-from seequery.utils.linking_category import LinkingCategory
-import owlready2
 import os
 from typing import Any, Dict, List, Optional, Set, Tuple
+
+import owlready2
+
+from seequery.utils.helpers import Helpers
+from seequery.utils.linking_category import LinkingCategory
 
 
 class OntologyManager:

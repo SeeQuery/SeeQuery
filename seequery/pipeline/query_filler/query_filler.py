@@ -1,9 +1,10 @@
+import re
 from operator import itemgetter
 from typing import Dict, List
+
+from seequery.ontology.ontology_manager import OntologyManager
 from seequery.pipeline.match_item import MatchItem
 from seequery.pipeline.pipeline_component import PipelineComponent
-from seequery.ontology.ontology_manager import OntologyManager
-import re
 
 
 class QueryFiller(PipelineComponent):

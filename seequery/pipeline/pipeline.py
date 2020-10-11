@@ -1,16 +1,18 @@
+import logging
+
+import spacy
+
 from seequery.embeddings.embeddings_manager import EmbeddingsManager
-# from seequery.pipeline.linker.contextual_rescorer import ContextualRescorer
+from seequery.ontology.ontology_manager import OntologyManager
 from seequery.pipeline.linker.entity_linker import EntityLinker
-from seequery.pipeline.pattern_to_template.pattern_to_template_selector import PatternToTemplateSelector
+from seequery.pipeline.pattern_to_template.pattern_to_template_selector import \
+    PatternToTemplateSelector
+from seequery.pipeline.query_filler.query_filler import QueryFiller
 from seequery.pipeline.reorganizer.reorganizer import Reorganizer
 from seequery.pipeline.vocab.direct_matcher import DirectMatcher
 from seequery.pipeline.vocab.merger import Merger
 from seequery.pipeline.vocab.reqtagger import ReqTagger
-from seequery.pipeline.query_filler.query_filler import QueryFiller
-from seequery.ontology.ontology_manager import OntologyManager
 from seequery.utils.helpers import Helpers
-import logging
-import spacy
 
 
 class Pipeline:

@@ -1,6 +1,7 @@
-from seequery.utils.meta_template import MetaTemplateChunks
 from copy import deepcopy
+
 from seequery.pipeline.pipeline_component import PipelineComponent
+from seequery.utils.meta_template import MetaTemplateChunks
 
 
 class Reorganizer(PipelineComponent):
