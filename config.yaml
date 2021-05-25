@@ -10,7 +10,6 @@ pipeline:
     query_maker:
         mapping_path: 'resources/cq_to_query/mapping.json'
 embeddings:
-    emb_path: './resources/embeddings/glove.840B.300d.txt'
     pickle_it: True
     lemmatize: True
 
