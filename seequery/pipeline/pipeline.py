@@ -7,6 +7,7 @@ from seequery.ontology.ontology_manager import OntologyManager
 from seequery.pipeline.linker.entity_linker import EntityLinker
 from seequery.pipeline.pattern_to_template.pattern_to_template_selector import \
     PatternToTemplateSelector
+#from seequery.pipeline.linker.bert_linker import BertVectorizer
 from seequery.pipeline.query_filler.query_filler import QueryFiller
 from seequery.pipeline.reorganizer.reorganizer import Reorganizer
 from seequery.pipeline.vocab.direct_matcher import DirectMatcher
@@ -38,7 +39,7 @@ class Pipeline:
             Merger(),  # helper step, merging ReqTagger and Direct Matcher outputs
             PatternToTemplateSelector(config['pattern_extractor']),
             Reorganizer(),  # prepares data for further processing, auxiliary step
-            EntityLinker(self.ontology_mngr, self.embedding_mngr, config['entity_linker']),
+            EntityLinker(self.ontology_mngr, self.embedding_mngr, self.spacy_nlp, config['entity_linker']),
             QueryFiller(self.ontology_mngr)
         ]
 
@@ -56,9 +57,14 @@ class Pipeline:
         logging.debug(f"Pipeline::run preprocessing, cq cleaned {cq}")
 
         data = {"cq": cq}
-        try:
-            for component in self.components:
-                data = component.process(data)
-        except Exception:
-            return {"QueryGenerationFailure": "Cannot generate a query from given CQ/ontology."}
+        for component in self.components:
+            data = component.process(data)
+        #try:
+        #    for component in self.components:
+        #        data = component.process(data)
+        #        logging.debug("Step...")
+        #except Exception as e:
+        #    logging.debug(e)
+        #    print(e)
+        #    return {"QueryGenerationFailure": "Cannot generate a query from given CQ/ontology."}
         return data

@@ -28,23 +28,30 @@ class MetaTemplateChunks:
         data_property_chunks = set()
         chunks_in_template = set()
 
+        cnt = 0
+
         for bracket_chunk in re.finditer("<(IS_EC|HAS_EC|EC|PC)[0-9]+>", template):
             chunk = bracket_chunk.group()[1:-1]  # strip angle brackets
             bracket_end_pos = bracket_chunk.span()[1]
 
             if "_" in chunk:
-                chunk = chunk.split(" ")[1]
+                chunk = chunk.split("_")[1]
                 ecs_used_as_pcs.add(chunk)
 
             if chunk in ecs_used_as_pcs or chunk.startswith("PC"):
-                if "somevaluesfrom" in template_lowercased[bracket_end_pos:bracket_end_pos + 30]:
-                    object_property_chunks.add(chunk)
-                elif "hasvalue" in template_lowercased[bracket_end_pos:bracket_end_pos + 30]:
+                if "hasvalue" in template_lowercased[bracket_end_pos:bracket_end_pos + 30]:
                     data_property_chunks.add(chunk)
+                # if "somevaluesfrom" in template_lowercased[bracket_end_pos:bracket_end_pos + 30]:
+                else:
+                    object_property_chunks.add(chunk)
 
             chunks_in_template.add(chunk)
             relations = ecs_used_as_pcs | object_property_chunks | data_property_chunks
             entities = chunks_in_template - relations
+            cnt += 1
+
+        if cnt == 0:
+            print(template)
 
         return MetaTemplateChunks(chunks=chunks_in_template,
                                   ecs_used_as_pcs=ecs_used_as_pcs,
@@ -58,10 +65,11 @@ class MetaTemplateChunks:
         Returns:
             bool: True if at most one PC and at most 2 ECs
         """
+        return True
         properties = self.ecs_used_as_pcs | self.object_property_chunks | self.data_property_chunks
         entities = self.chunks - properties
 
-        if len(properties) <= 1 and (len(entities) > 0 and len(entities) < 3):
+        if len(properties) <= 1 and (len(entities) > 0 and len(entities) < 4):
             return True
         else:
             return False

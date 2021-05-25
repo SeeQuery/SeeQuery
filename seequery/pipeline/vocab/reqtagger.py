@@ -14,26 +14,30 @@ class ReqTagger(PipelineComponent):
                           'have', 'had', 'can', 'could', 'regarding',
                           'is of', 'are of', 'are in', 'given', 'is there', 'has']
 
-    NON_ENTITY_THINGS = ['a kind', 'the kind', 'kind', 'kinds', 'the kinds',
-                         'category', 'a category', 'the category', 'categories', 'the categories',
-                         'type', 'a type', 'the type', 'sort', 'types', 'the types']
+    NON_ENTITY_THINGS = ['a kind', 'the kind', 'kind', 'many kinds', 'kinds', 'the kinds',
+                         'category', 'a category', 'the category', 'categories', 'many categories' 'the categories',
+                         'type', 'a type', 'the type', 'sort', 'sorts', 'many sorts',
+                         'many types', 'types', 'the types', 'available', 'possible', 'acceptable', 'defined', 'many', 'much', 'more', 'less', 'few']
 
     RULES_RELATIONS = [
         ['{1+}JJ', 'IN'],
         ['JJR', 'IN'],
         ['RB', 'VBD'],
         ['{0+}MD', '{1+}VBZ|VBN', 'TO', 'VB'],
-        ['{0+}MD', 'VB', 'VBN', 'IN'],
+        ['{0+}MD', 'VB', '{0+}VBN', 'IN'],
         ['{1?}TO', 'VB|VBN|VBZ|VBP', '{1?}JJ', 'IN'],
         ['{0+}VB|MD', '{0+}TO', 'VB'],
+        ['VB', 'RB|RBR|RBS'],
         ['{1?}TO', '{0+}VB|VBP|VBZ|VBN|VBD|VBG', '{1+}RBS|VB|VBZ|VBN|VBD|VBG|IN', 'RBS|IN'],
         ['{1?}TO', 'VB|VBZ|VBP|VBG|VBD', 'VB|VBN|VBG|VBG|VBD|JJR|RP'],
         ['VBN', 'VBG']
     ]
 
     RULES_ENTITIES = [
-        ['{1?}DT', '{0+}FW|JJ|JJS|NN|NNS|NNP', 'NN|NNP|NNS'],
-        ['DT', 'VB|VBG|VBD|VBZ|VBN', '{0+}NN|NNS|NNP|JJ', 'NN|NNS|NNP']
+        ['{1?}DT', '{0+}FW|JJ|JJS', '{0+}NN|NNS|NNP', 'NN|NNP|NNS'],
+        ['DT', 'NN', 'JJ', 'NN'],
+        ['DT', 'VB|VBG|VBD|VBZ|VBN', '{0+}NN|NNS|NNP|JJ', 'NN|NNS|NNP'],
+        ['JJ|JJS']
     ]
 
     def __init__(self, nlp: spacy.lang.xx.Language, ontology_mngr: OntologyManager) -> None:
@@ -87,11 +91,22 @@ class ReqTagger(PipelineComponent):
             rule_parsed = self.parse_rule(rule)
             for m in re.finditer(rule_parsed, pos_text):
                 id_tags = [elem for elem in m.group().split(",") if elem != '']
-                ids = [int(id_tag.split("::")[0]) for id_tag in id_tags]
+                ids = sorted([int(id_tag.split("::")[0]) for id_tag in id_tags])
+                if doc[ids[0]].text.lower() in {'many', 'much', 'any', 'different'}:
+                    ids = ids[1:]
+                if len(ids) > 2 and doc[ids[-1]].text.lower() in {'than'}:
+                    if doc[ids[-2]].text.lower() in {'less', 'more'}:
+                        ids = ids[:-2]
+                        pass
+                if len(ids) > 1 and doc[ids[-1]].text.lower() in {'exactly', 'more', 'less'}:
+                    ids = ids[:-1]
+                if len(ids) == 0:
+                    continue
+                # ids = [id for id in ids if doc[id].text.lower() not in {'many', 'much', 'any', 'different'}]
                 span = (doc[ids[0]].idx, doc[ids[-1]].idx + len(doc[ids[-1]]))
                 if cq[span[0]:span[1]].lower() not in rejected:
                     spans.append(span)
-        return Helpers.filter_subspans(spans)
+        return sorted(Helpers.filter_subspans(spans))
 
     def process(self, data: dict) -> dict:
         """
@@ -110,8 +125,10 @@ class ReqTagger(PipelineComponent):
 
         entities = []
         for begin, end in entity_spans:
+            if any([Helpers.is_subspan((begin, end), rel) for rel in relations_spans]):
+                continue
             normalized_text = \
-                re.sub(r'^([Tt]he|[Aa]|[Ss]ome|[Gg]iven|different|many|various|all|much) ',
+                re.sub(r'^([Tt]he|[Aa]|[Aa]n|[Ss]ome|[Gg]iven|different|many|various|all|much|any) ',
                        '', cq[begin:end].strip())
 
             entities.append(MatchItem(char_begin=begin, char_end=end,
@@ -122,6 +139,8 @@ class ReqTagger(PipelineComponent):
 
         relations = []
         for begin, end in relations_spans:
+            if any([Helpers.is_subspan((begin, end), ent) for ent in entity_spans]):
+                continue
             normalized_text = \
                 re.sub(
                     r'^(is|are|was|will|have|has|had|should|shall|would|can|could) ',

@@ -23,29 +23,15 @@ class Merger(PipelineComponent):
         cq = data['cq']
 
         merged_phrases = []
+        all_phrases = []
 
         for key in types:
             potential = data['potential_matches'][key]
             direct = data['direct_matches'][key]
 
             for p in potential:
-                span_potential = (p.char_begin, p.char_end)
-
-                current_potential_overlaps = False
-                for d in direct:
-                    span_direct = (d.char_begin, d.char_end)
-
-                    if Helpers.span_overlap(span_potential, span_direct):
-                        merged = d
-                        merged.char_begin = min(p.char_begin, d.char_begin)
-                        merged.char_end = max(p.char_end, d.char_end)
-                        merged.text = cq[merged.char_begin:merged.char_end]
-                        merged_phrases.append(merged)
-                        current_potential_overlaps = True
-                        break
-
-                if not current_potential_overlaps:
-                    merged_phrases.append(p)
+                merged_phrases.append(p)
+                all_phrases.append((p.char_begin, p.char_end))
 
             for d in direct:
                 span_direct = (d.char_begin, d.char_end)
@@ -53,13 +39,14 @@ class Merger(PipelineComponent):
 
                 for p in potential:
                     span_potential = (p.char_begin, p.char_end)
-                    if Helpers.span_overlap(span_potential, span_direct):
+                    if Helpers.span_overlap(span_potential, span_direct) or any([Helpers.span_overlap(span_direct, e) for e in all_phrases]):
                         current_direct_overlaps = True
                         break
 
                 if not current_direct_overlaps:
                     print(f"\tDirect {d.raw_text} did not intersect adding as is")
                     merged_phrases.append(d)
+                    all_phrases.append((d.char_begin, d.char_end))
 
         # categorize based on is_ec attrib, sort by position in cq
         data['entities'] = sorted([e for e in merged_phrases if e.is_ec], key=lambda x: x.char_begin)

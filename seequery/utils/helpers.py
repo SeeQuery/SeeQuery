@@ -45,7 +45,7 @@ class Helpers:
         upper_count = sum(map(str.isupper, label))
         if " " not in label and lower_count > 0 and upper_count > 0:
             # camel case to "normal case"
-            label = re.sub("r([a-z])([A-Z])", r"\g<1> \g<2>", label)
+            label = re.sub(r"([a-z])([A-Z])", r"\g<1> \g<2>", label)
         label = re.sub(r"(^[Tt]he |^[Aa] )", "", label)  # drop determiner
         return label.lower()
 
@@ -63,7 +63,14 @@ class Helpers:
             r"[-\"\'”]": "",  # remove all dashes and quotations
             r"\(.*?\)": "",   # remove all ( )
             r"[ \t]+": " ",   # remove all multiplied whitespaces
-            r" \?": "?"       # remove whitespaces before ?
+            r" \?": "?",       # remove whitespaces before ?
+            r"a single": "exactly 1",
+            r"one": '1',
+            r"a double": 'exactly 2',
+            r"two": '2',
+            r"three": '3',
+            r"four": '4',
+            "five": '5'
         }
 
         for regex in normalizers:
@@ -123,3 +130,9 @@ class Helpers:
         filtered = list(dict.fromkeys(filtered))  # remove duplicates if present
 
         return filtered
+
+    @staticmethod
+    def strip_s(text):
+        if text.endswith('s'):
+            return text[:-1]
+        return text
