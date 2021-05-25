@@ -10,11 +10,12 @@ def main() -> None:
     if len(sys.argv) == 1:
         translator = CQToSPARQLOWL()
     else:
-        translator = CQToSPARQLOWL(config_path=sys.argv[1])
+        config = CQToSPARQLOWL.load_config(sys.argv[1])
+        translator = CQToSPARQLOWL(config=config)
 
     while True:
-        for query in translator.translate(input("Please type your CQ: ")):
-            print(query)
+        print(translator.translate(input("Please type your CQ: "), dump_debug_info=True))
+        #    print(query)
         print("-" * 80)
 
 

@@ -26,7 +26,8 @@ class OntologyManager:
             LinkingCategory.INDIVIDUAL: {self._get_label(i): i for i in
                                          self.ontology.individuals()}
         }
-
+        self.entities = [k for k, _ in self.onto_map[LinkingCategory.CLASS].items()] + [k for k, _ in self.onto_map[LinkingCategory.INDIVIDUAL].items()]
+        self.properties = [k for k, _ in self.onto_map[LinkingCategory.OBJECT_PROPERTY].items()] + [k for k, _ in self.onto_map[LinkingCategory.DATA_PROPERTY].items()]
         self.prop_examples = self.get_usages()
 
     def calc_restriction_score(self, predicate: Any, obj1: Any,
@@ -205,11 +206,12 @@ class OntologyManager:
             str: label of a given object
         """
         if hasattr(obj, 'prefLabel') and obj.prefLabel.first() is not None:
-            return obj.prefLabel.first()
+            label = obj.prefLabel.first()
         elif obj.label.first() is not None:
-            return obj.label.first()
+            label = obj.label.first()
         else:
-            return obj.name
+            label = obj.name
+        return Helpers.normalize_label(label)
 
     def get_usages(self) -> Dict[Any, List[Tuple[Any, Any]]]:
         """ Generate properties associated with a list of tuples with arguments used with it

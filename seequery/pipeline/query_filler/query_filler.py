@@ -1,6 +1,6 @@
 import re
 from operator import itemgetter
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from seequery.ontology.ontology_manager import OntologyManager
 from seequery.pipeline.match_item import MatchItem
@@ -22,10 +22,14 @@ class QueryFiller(PipelineComponent):
             Returns:
                 dict: a dict holding object state enriched with current pipeline results
         """
+
+        if 'status' in data and data['status']['type'] == 'ERROR':
+            return data
+
         queries = []
         for idx, meta_enriched_vocab in enumerate(data['vocab_for_templates']):
             if not meta_enriched_vocab['success']:
-                data['queries'].append("")
+                queries.append("")
                 continue
 
             query_variants = data['query_templates'][idx]
@@ -68,7 +72,7 @@ class QueryFiller(PipelineComponent):
             template = template[:begin] + "<" + onto_iri + ">" + template[end:]
         return template
 
-    def choose_template_variant(self, variants: List[str], argswap: bool) -> str:
+    def choose_template_variant(self, variants: Union[str, dict], argswap: bool) -> str:
         """ If multiple SPARQL-OWL query template variants provided, choose appropriate based on 'argswap'
 
         Args:
@@ -78,7 +82,8 @@ class QueryFiller(PipelineComponent):
         Returns:
             str: variant chosen
         """
-        if len(variants) == 1:
-            return variants[0]
+
+        if isinstance(variants, dict):
+            return variants['reversed'] if argswap else variants['normal']
         else:
-            return variants[1] if argswap else variants[0]
+            return variants

@@ -9,9 +9,20 @@ from seequery.pipeline.pipeline_component import PipelineComponent
 class PatternToTemplateSelector(PipelineComponent):
     """ Search for the closest know CQ pattern and collect SPARQL-OWL templates assigned. """
     def __init__(self, config: dict) -> None:
+        self.drop_qm = config['drop_question_marks']
+        self.drop_aux_verbs = config['drop_auxiliary_verbs']
         self.everygram_scorer = EverygramSimilarityScorer()
+
         with open(config['mapping_path'], 'r') as f:
             self.pattern_mapping = json.load(f)
+            if self.drop_qm:
+                for cq_pattern in self.pattern_mapping.keys():
+                    new_cq_pattern = self.drop_question_mark(cq_pattern)
+                    self.pattern_mapping[new_cq_pattern] = self.pattern_mapping.pop(cq_pattern)
+            if self.drop_aux_verbs:
+                for cq_pattern in self.pattern_mapping.keys():
+                    new_cq_pattern = self.drop_auxiliary_if_pc_detected(cq_pattern)
+                    self.pattern_mapping[new_cq_pattern] = self.pattern_mapping.pop(cq_pattern)
             self.known_patterns = self.pattern_mapping.keys()
 
     def process(self, data: dict) -> dict:
@@ -25,10 +36,18 @@ class PatternToTemplateSelector(PipelineComponent):
                 dict: a dict holding object state enriched with current pipeline results
         """
         data['cq_pattern'] = self.construct_cq_pattern(data)
-        data['cq_pattern'] = self.drop_auxiliary_if_pc_detected(data['cq_pattern'])
-        data['cq_pattern'] = self.drop_question_mark(data['cq_pattern'])
+        if self.drop_aux_verbs:
+            data['cq_pattern'] = self.drop_auxiliary_if_pc_detected(data['cq_pattern'])
+        if self.drop_qm:
+            data['cq_pattern'] = self.drop_question_mark(data['cq_pattern'])
 
         data['closest_pattern'] = self.get_closest_match(data['cq_pattern'])
+        if data['closest_pattern'] == "":
+            data['status'] = {
+                "type": "ERROR",
+                "message": "No template with a given number of IRIs"
+            }
+            return data
         data['query_templates'] = self.pattern_mapping[data['closest_pattern']]
         return data
 

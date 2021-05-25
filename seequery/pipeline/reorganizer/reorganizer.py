@@ -22,9 +22,16 @@ class Reorganizer(PipelineComponent):
                 dict: a dict holding object state enriched with reorganized pipeline results
         """
 
+        if 'status' in data and data['status']['type'] == 'ERROR':
+            return data
+
         data['vocab_for_templates'] = []
         for template_order_variants in data['query_templates']:
-            template = template_order_variants[0]  # {TODO: argswap handling! see pattern_mapping.json}
+            if isinstance(template_order_variants, dict):
+                template = template_order_variants['normal']
+            else:
+                template = template_order_variants
+            # template = template_order_variants  # {TODO: argswap handling! see pattern_mapping.json}
             meta = MetaTemplateChunks.from_template(template)
 
             if meta.can_be_handled():

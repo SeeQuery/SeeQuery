@@ -1,4 +1,5 @@
 import logging
+import pprint
 from typing import List, Optional, Tuple, Union
 
 import spacy
@@ -7,21 +8,21 @@ from spacy.cli.download import download as spacy_download
 
 from seequery.embeddings.embeddings_manager import EmbeddingsManager
 from seequery.ontology.ontology_manager import OntologyManager
+from seequery.pipeline.linker.bert_linker import BertVectorizer
 from seequery.pipeline.pipeline import Pipeline
 
 
 class CQToSPARQLOWL:
-    def __init__(self, config_path: str = 'config.yaml'):
-        self.config = self._load_config(config_path)
-
-        if not self.config:
-            print(f"Cannot load config {config_path}, exiting...")
-            exit(1)
+    def __init__(self, config: Optional[dict] = None):
+        if config:
+            self.config = config
+        else:
+            logging.debug("No config provided. Fallback to default config.yaml")
+            self.config = self.load_config('config.yaml')
 
         self.spacy_nlp = self._load_spacy(self.config['spacy_model'])
-        self.embeddings_mngr = EmbeddingsManager(self.config['embeddings'],
-                                                 self.spacy_nlp)
         self.ontology_mngr = OntologyManager(self.config['ontology'])
+        self.embeddings_mngr = BertVectorizer(ontology_mngr=self.ontology_mngr)
         self.pipeline = Pipeline(self.config['pipeline'],
                                  self.embeddings_mngr,
                                  self.ontology_mngr,
@@ -42,13 +43,16 @@ class CQToSPARQLOWL:
         logging.debug(f'\n\nTranslating CQ: {cq}')
 
         output = self.pipeline.run(cq)
-
-        if 'QueryGenerationFailure' in output:
+        if 'status' in output and output['status']['type'] == 'ERROR':
+            print(f"ERROR: {output['status']['message']}")
+            # pprint.pprint(output)
+        elif 'QueryGenerationFailure' in output:
             return [output['QueryGenerationFailure']]
         else:
             return output['queries'] if not dump_debug_info else [(output['queries'], output)]
 
-    def _load_config(self, path: str) -> Optional[dict]:
+    @staticmethod
+    def load_config(path: str) -> Optional[dict]:
         """Load application config YAML file.
             Args:
                 path (str): path to config YAML file

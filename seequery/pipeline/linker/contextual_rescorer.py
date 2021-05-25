@@ -45,6 +45,12 @@ class ContextualRescorer(PipelineComponent):
                     to_update.append((rhs_idx, "best_rhs"))
 
                 for idx, key in to_update:
+                    if key not in result:
+                        data['status'] = {
+                            "type": "ERROR",
+                            "message": f"No {key}"
+                        }
+                        return data
                     meta_enriched_vocab['vocab'][idx].scored_candidates = [result[key]['scored_translation']]
                 if swap:
                     meta_enriched_vocab['swap'] = True

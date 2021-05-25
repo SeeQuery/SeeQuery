@@ -1,12 +1,14 @@
 pipeline:
     entity_linker:
         best_mappings: 1000
-        min_entity_similarity: 0.65
+        min_entity_similarity: 0.82
         min_relation_similarity: 0.0
     pattern_extractor:
-        mapping_path: 'resources/cq_to_query/pattern_mapping.json'
+        mapping_path: 'resources/cq_to_query/mapping.json'
+        drop_question_marks: False
+        drop_auxiliary_verbs: False
     query_maker:
-        mapping_path: 'resources/cq_to_query/pattern_mapping.json'
+        mapping_path: 'resources/cq_to_query/mapping.json'
 embeddings:
     emb_path: './resources/embeddings/glove.840B.300d.txt'
     pickle_it: True
@@ -15,5 +17,5 @@ embeddings:
 ontology:
     onto_id: "pizza"  # swo, ontodt, demcare, stuff, awo or file path
 
-spacy_model: 'en_core_web_md'
+spacy_model: 'en_core_web_trf'
 log_filename: 'log.txt'
