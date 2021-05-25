@@ -1,0 +1,70 @@
+CQ,Goleden standard (expected),generated
+Which are the body parts that compose a shoulder?,"select ?subpart
+where {
+   $shoulder rdfs:subClassOf [a owl:Restriction; owl:someValuesFrom ?subpart]
+}",Cannot link 'the body parts'
+Which body part does an auxiliary movement refer to?,"select ?location
+{
+    # $movement e.g. KiReSOntFM:Mov2.2.1z
+    $movement rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty KiReSOntFM:hasComponent;
+        owl:someValuesFrom [
+            a owl:Restriction;
+            owl:onProperty KiReSOntFM:hasLocation;
+            owl:someValuesFrom ?location
+        ]
+    ]
+}","SELECT ?x WHERE { 
+     ?x rdfs:subClassOf [ owl:intersectionOf ( <http://purl.org/sig/ont/fma/fma7153> 
+     [ rdf:type owl:Restriction ; owl:onProperty <http://purl.org/sig/ont/fma/constitutional_part_of> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#AuxiliaryMovement> ] ) ] . }']"
+Which range of movement does a movement cover?,"# Which range of movement does a movement cover?
+
+#TODO test!
+
+prefix fma: <http://purl.org/sig/ont/fma/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix KiReSOntFM: <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#>
+
+select ?min ?max
+{
+    # $movement e.g. KiReSOntFM:Mov2.2.1z
+    $movement rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty KiReSOntFM:hasROMmin;
+        owl:hasValue ?min
+    ], [
+               a owl:Restriction;
+               owl:onProperty KiReSOntFM:hasROMmax;
+                owl:hasValue ?max
+           ]
+}",-
+Which exercises compose a phase of a treatment protocol?,"prefix fma: <http://purl.org/sig/ont/fma/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix KiReSOntFM: <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#>
+
+select ?exercise
+{
+    $phase rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty KiReSOntFM:hasExercise;
+        owl:someValuesFrom ?exercise
+    ] .
+    ?exercise rdfs:subClassOf KiReSOntFM:NamedExercise
+}","['SELECT DISTINCT * WHERE { ?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise>, [ a owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#hasExercise> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Phase> ],  [ a owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#hasExercise> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#TreatmentProtocol> ]']
+"
+Which are the conditions that a patient must fulfill in order to be in a phase of a treatment protocol?,"select ?condition
+where
+{
+    $phase rdfs:subClassOf
+        KiReSOntFM:Phase,
+        [
+            a owl:Restriction;
+            owl:onProperty KiReSOntFM:hasConditions ;
+            owl:someValuesFrom ?condition
+        ].
+}",Too many entities (no template)
+Which phase is a patient in?,-,SELECT DISTINCT * WHERE { <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> rdfs:subClassOf ?x . ?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Phase> . filter(?x != <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Phase> && ?x != <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient>) }
+Which exercises do patients usually perform badly?,-,"['SELECT ?x WHERE { <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> rdfs:subClassOf [a owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#contraindicated> ; owl:someValuesFrom ?x] . ?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> . filter(?x != <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise>) }', 'SELECT ?x WHERE { ?x rdfs:subClassOf [ owl:intersectionOf ( <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> [ rdf:type owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#contraindicated> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> ] ) ] . }']"

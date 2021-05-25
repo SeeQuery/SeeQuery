@@ -1,0 +1,72 @@
+CQ,golden standard (expecteed),Generated
+Which exercises are recommended for a patient?,"select ?exercise
+where
+{
+    $patient rdfs:subClassOf [
+    a owl:Restriction;
+    owl:onProperty TrhOnt:recommended ;
+    owl:someValuesFrom ?exercise
+    ]
+}","SELECT ?x WHERE { 
+    ?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> ; 
+    rdfs:subClassOf [ 
+          a owl:Restriction ; 
+          owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#OWLObjectProperty_150f4fc8_7ca7_40ff_9229_cc7626f739aa> ; 
+          owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> ] .  }
+
+
+SELECT ?x WHERE { 
+     ?x rdfs:subClassOf [ owl:intersectionOf ( <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> 
+            [ rdf:type owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#OWLObjectProperty_150f4fc8_7ca7_40ff_9229_cc7626f739aa> ; owl:someValuesFrom   <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> ] ) ] . }"
+Which exercises are contraindicated for a patient?,"select ?exercise
+where
+{
+    $patient rdfs:subClassOf [
+    a owl:Restriction;
+    owl:onProperty TrhOnt:contraindicated ;
+    owl:someValuesFrom ?exercise
+    ]
+}","SELECT ?x WHERE { 
+     ?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> ; 
+     rdfs:subClassOf [ a owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#OWLObjectProperty_d1cf5fdf_38ac_4a82_b3b2_a3b128379a10> ; 
+     owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> ] .  }
+
+SELECT ?x WHERE { ?x rdfs:subClassOf [ owl:intersectionOf ( <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> [ rdf:type owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#OWLObjectProperty_d1cf5fdf_38ac_4a82_b3b2_a3b128379a10> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/TrhOnt#Patient> ] ) ] . }"
+Which movements compose an exercise?,"select ?movement
+{
+    $exercise rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty KiReSOntFM:hasMovement;
+        owl:someValuesFrom ?movement
+    ] .
+    ?movement rdfs:subClassOf KiReSOntFM:NamedMovement
+}","SELECT ?x WHERE { 
+    <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> rdfs:subClassOf [a owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#hasMovement> ; owl:someValuesFrom ?x] . 
+?x rdfs:subClassOf <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Movement> . filter(?x != <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Movement>) }'
+
+
+SELECT ?x WHERE { ?x rdfs:subClassOf [ owl:intersectionOf ( <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Movement> [ rdf:type owl:Restriction ; owl:onProperty <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#hasMovement> ; owl:someValuesFrom <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#Exercise> ] ) ] . }
+"
+Which is the type of an auxiliary movement?,"select ?type
+{
+    # $movement e.g. KiReSOntFM:Mov2.2.1z
+    $movement rdfs:subClassOf [
+        a owl:Restriction;
+        owl:onProperty KiReSOntFM:hasComponent;
+        owl:someValuesFrom [
+            a owl:Restriction;
+            owl:onProperty KiReSOntFM:hasMovementType;
+            owl:someValuesFrom ?type
+        ]
+    ]
+}","SELECT ?x WHERE { <http://bdi.si.ehu.es/bdi/ontologies/KiReSOntFM#AuxiliaryMovement> rdfs:subClassOf ?x . }
+"
+What is the patient’s age?,[Cannot be translated into a query],EMPTY LIST
+Which health issue does the patient report?,[Cannot be translated into a query],EMPTY LIST
+Which are the patient’s recovery goals?,[Cannot be translated into a query],EMPTY LIST
+How much pain does the patient report on the Visual Analogue Scale (VAS)?,[Cannot be translated into a query],EMPTY LIST
+Which results are obtained from the exploration of the joint movement of the patient?,[Cannot be translated into a query],EMPTY LIST
+What is the physiotherapy diagnostics of the patient?,[Cannot be translated into a query],EMPTY LIST
+Which is the family and personal past history of the patient?,[Cannot be translated into a query],EMPTY LIST
+Which is the laterality of a shoulder?,[Cannot be translated into a query],EMPTY LIST
+Which are the conditions that an exercise must fulfill to be a candidate exercise for a phase of a treatment protocol?,[Cannot be translated into a query],EMPTY LIST

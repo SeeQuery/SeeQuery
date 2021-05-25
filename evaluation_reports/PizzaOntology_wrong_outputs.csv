@@ -1,0 +1,99 @@
+CQ,golden standard (expected),generated,
+Are anchovies and capers used together?,"ask {
+?pizza rdfs:subClassOf :Pizza ;
+  rdfs:subClassOf [
+     a owl:Restriction;
+     owl:onProperty :hasTopping;
+     owl:someValuesFrom :CaperTopping ];
+  rdfs:subClassOf [
+       a owl:Restriction;
+       owl:onProperty :hasTopping;
+       owl:someValuesFrom :AnchoviesTopping ];
+       filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","ASK WHERE { 
+    <http://www.co-ode.org/ontologies/pizza/pizza.owl#AnchoviesTopping> rdfs:subClassOf [ 
+               a owl:Restriction ; 
+              owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#isIngredientOf> ; 
+              owl:someValuesFrom <http://www.co-ode.org/ontologies/pizza/pizza.owl#CaperTopping> ] }",Used together has a special meaning. In see query it is treated as a candidate for a property label instead
+Are different bases avaialable?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+ask {
+?base1 rdfs:subClassOf :PizzaBase .
+?base2 rdfs:subClassOf :PizzaBase .
+filter(?base1 != ?base2)
+}","No translation for bases found. In the ontology, there is a 'pizza base' concept that cannot be linked with 'base'","
+"
+Can you have a pizza with any combination of toppings?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select * {
+?topping1 rdfs:subClassOf :PizzaTopping .
+?topping2 rdfs:subClassOf :PizzaTopping .
+filter(?topping1 != ?topping2)
+filter not exists {?topping1 rdfs:subClassOf owl:Nothing}
+filter not exists {?topping2 rdfs:subClassOf owl:Nothing}
+[
+a owl:Class ;
+owl:intersectionOf (:Pizza
+[a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom ?topping1]
+[a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom ?topping2])
+]  rdfs:subClassOf owl:Nothing.
+}","No translation for toppings found. In the ontology, there is a 'pizza base' concept that cannot be linked with 'base'",
+How many pizzas have either ham or chicken topping?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select (count(distinct ?pizza) as ?count) {
+?pizza rdfs:subClassOf :Pizza ;
+ rdfs:subClassOf [ a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom [a owl:Class; owl:unionOf (:ChickenTopping :HamTopping) ] ]
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","SELECT DISTINCT * WHERE { 
+    <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza> rdfs:subClassOf ?x . 
+    filter(?x in (<http://www.co-ode.org/ontologies/pizza/pizza.owl#HamTopping>, <http://www.co-ode.org/ontologies/pizza/pizza.owl#ChickenTopping>)) }']",
+What kind of pizza contains a single meat ingredient?,# Impossible to express,"SELECT ?x WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza>, 
+    [ rdf:type owl:Restriction ; 
+      owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping> ; 
+      owl:onClass <http://www.co-ode.org/ontologies/pizza/pizza.owl#MeatTopping> ; 
+      owl:qualifiedCardinality '1'^^xsd:nonNegativeInteger ] . }""]
+",
+Which are the nut free pizzas?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct * {
+?pizza rdfs:subClassOf :Pizza.
+?pizza owl:disjointWith [a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :NutTopping]
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}",Cannot link 'the nut free pizzas' to a single entity,
+Which pizzas are spicy?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct * {
+?pizza rdfs:subClassOf :SpicyPizza.
+filter (?pizza != :SpicyPizza)
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","SELECT DISTINCT * WHERE { 
+    ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza> . 
+    ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#SpicyTopping>}']",
+Which pizzas contain prawns but not anchovy?,"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct * {
+?pizza rdfs:subClassOf :Pizza,
+[a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :PrawnsTopping].
+?pizza owl:disjointWith [a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :AnchoviesTopping].
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","SELECT DISTINCT * WHERE { 
+    ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza>, 
+    [ a owl:Restriction ; owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping> ; 
+      owl:someValuesFrom owl:intersectionOf (<http://www.co-ode.org/ontologies/pizza/pizza.owl#PrawnsTopping> 
+        [ owl:complementOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#AnchoviesTopping> ]) ]}']",
+Which pizzas do not have nuts?,"# This the same as ""Which are the nut free pizzas?',""","SELECT DISTINCT * WHERE { 
+     ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza> . 
+     ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#NutTopping>}']
+",

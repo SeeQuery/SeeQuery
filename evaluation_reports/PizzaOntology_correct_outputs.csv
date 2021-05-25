@@ -1,0 +1,115 @@
+CQ,golden standard (expected),Generated
+"Which sort of cheese do we have?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct * {
+?cheese rdfs:subClassOf :CheeseTopping.
+filter(?cheese != :CheeseTopping)
+filter not exists {?cheese rdfs:subClassOf owl:Nothing}
+}","SELECT ?x WHERE { 
+    ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#CheeseTopping> }
+]
+"
+"Which pizzas contain peppers and olives?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct * {
+?pizza rdfs:subClassOf :Pizza,
+[a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :PepperTopping],
+[a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :OliveTopping].
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","SELECT ?x WHERE { 
+?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza>, 
+[ a owl:Restriction ; owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping> ; owl:someValuesFrom <http://www.co-ode.org/ontologies/pizza/pizza.owl#OliveTopping> ],  
+[ a owl:Restriction ; owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping> ; owl:someValuesFrom <http://www.co-ode.org/ontologies/pizza/pizza.owl#PepperTopping> ]']
+"
+"What sauces are available?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct ?sauce {
+?sauce rdfs:subClassOf :SauceTopping
+filter(?sauce != :SauceTopping)
+filter not exists {?sauce rdfs:subClassOf owl:Nothing}
+}","SELECT ?x WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#SauceTopping> . }'
+"
+"What kinds of pizza bases are possible?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct ?base {
+?base rdfs:subClassOf :PizzaBase
+filter not exists {?base rdfs:subClassOf owl:Nothing}
+filter(?base != :PizzaBase)
+}","SELECT ?x WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#PizzaBase> . }
+"
+"What are the types of pizza base options?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct ?base {
+?base rdfs:subClassOf :PizzaBase
+filter not exists {?base rdfs:subClassOf owl:Nothing}
+filter(?base != :PizzaBase)
+}","SELECT DISTINCT * WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#PizzaBase> . filter(?x != <http://www.co-ode.org/ontologies/pizza/pizza.owl#PizzaBase> && ?x != owl:Nothing) }
+
+
+SELECT ?x WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#PizzaBase> . }"
+"What are the types of vegetarian pizza?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select distinct ?pizza {
+?pizza rdfs:subClassOf :VegetarianPizza
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+filter(?pizza != :VegetarianPizza)
+}","SELECT DISTINCT * WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#VegetarianPizza> . filter(?x != <http://www.co-ode.org/ontologies/pizza/pizza.owl#VegetarianPizza> && ?x != owl:Nothing) }
+
+
+SELECT ?x WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#VegetarianPizza> . }
+"
+"How many pizzas are available?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select (count(distinct ?pizza) as ?count) {
+?pizza rdfs:subClassOf :Pizza .
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}",SELECT (COUNT(?x) AS ?cnt) WHERE { ?x rdfs:subClassOf <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza> . }
+"How many pizzas contain meat?',","prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix owl: <http://www.w3.org/2002/07/owl#>
+prefix : <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+
+select (count(distinct ?pizza) as ?count) {
+?pizza rdfs:subClassOf :Pizza ;
+ rdfs:subClassOf [ a owl:Restriction; owl:onProperty :hasTopping; owl:someValuesFrom :MeatTopping ]
+filter not exists {?pizza rdfs:subClassOf owl:Nothing}
+}","SELECT (COUNT(?x) AS ?cnt) WHERE { <http://www.co-ode.org/ontologies/pizza/pizza.owl#Pizza> rdfs:subClassOf 
+    [ rdf:type owl:Restriction ; owl:onProperty <http://www.co-ode.org/ontologies/pizza/pizza.owl#hasTopping> ; owl:someValuesFrom  <http://www.co-ode.org/ontologies/pizza/pizza.owl#MeatTopping> ] . }"
+Which toppings are allowed for customization purposes?,[Cannot be translated into a query],EMPTY LIST
+Which are the offers of the day?,[Cannot be translated into a query],EMPTY LIST
+Which is the latest combination of toppings?,[Cannot be translated into a query],EMPTY LIST
+Which pizzas are sharing 3 or more ingredients?,[Cannot be translated into a query],EMPTY LIST
+Which are the gluten free bases?,[Cannot be translated into a query],EMPTY LIST
+What pizzas contain less than 3 toppings?,[Cannot be translated into a query],EMPTY LIST
+What is the most popular topping?,[Cannot be translated into a query],EMPTY LIST
+What is the third least popular topping?,[Cannot be translated into a query],EMPTY LIST
+How much does Margherita Pizza weight?,[Cannot be translated into a query],EMPTY LIST
+How much it will cost me to order all pizzas in the menu?,[Cannot be translated into a query],EMPTY LIST
+Is pizza healthy?,[Cannot be translated into a query],EMPTY LIST
+Is spicy pizza stuffed crust and what is it stuffed with?,[Cannot be translated into a query],EMPTY LIST
+Is spicy pizza thin or thick bread?,[Cannot be translated into a query],EMPTY LIST
+Is vegetarian pizza deep pan or Chicago style?,[Cannot be translated into a query],EMPTY LIST
+Should we include the oven type in the pizza definition,[Cannot be translated into a query],EMPTY LIST
+How many pizzas did I eat last week?,[Cannot be translated into a query],EMPTY LIST
+Do pizzas come in different sizes?,[Cannot be translated into a query],EMPTY LIST
+Does a spicy pizza contain halal meat?,[Cannot be translated into a query],EMPTY LIST
+What are the origins of pizza toppings?,[Cannot be translated into a query],EMPTY LIST
+How many kinds of pizza I would make from 3 ingredients,[Cannot be translated into a query],EMPTY LIST
+Are there any children pizzas?,[Cannot be translated into a query],EMPTY LIST
+Are toppings organic?,[Cannot be translated into a query],EMPTY LIST
+Are we including the folded pizzas in our domain?,[Cannot be translated into a query],EMPTY LIST
+Can I have a menu without pizzas please?,[Cannot be translated into a query],EMPTY LIST
+Can I remove toppings from a pizza?,[Cannot be translated into a query],EMPTY LIST
